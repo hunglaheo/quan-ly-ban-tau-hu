@@ -1,0 +1,7 @@
+{
+  "name": "QuickSales Pro - Quản Lý Bán Hàng",
+  "description": "Giải pháp quản lý bán hàng thông minh, tối ưu cho di động với đầy đủ tính năng: khách hàng, kho hàng, đơn hàng và báo cáo tài chính.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

@@ -1,0 +1,71 @@
+
+-- 1. Bảng Khách hàng (customers)
+CREATE TABLE IF NOT EXISTS public.customers (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    phone TEXT,
+    address TEXT,
+    type TEXT DEFAULT 'Khách lẻ',
+    notes TEXT,
+    "createdAt" TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 2. Bảng Nguyên liệu (materials)
+CREATE TABLE IF NOT EXISTS public.materials (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    unit TEXT,
+    stock NUMERIC DEFAULT 0,
+    "purchasePrice" NUMERIC DEFAULT 0
+);
+
+-- 3. Bảng Thành phẩm (products)
+CREATE TABLE IF NOT EXISTS public.products (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    unit TEXT,
+    stock INTEGER DEFAULT 0,
+    "salePrice" NUMERIC DEFAULT 0,
+    recipe JSONB DEFAULT '[]'::jsonb,
+    "baseCost" NUMERIC DEFAULT 0
+);
+
+-- 4. Bảng Đơn hàng (orders)
+CREATE TABLE IF NOT EXISTS public.orders (
+    id TEXT PRIMARY KEY,
+    "customerId" TEXT REFERENCES public.customers(id) ON DELETE SET NULL,
+    "customerName" TEXT,
+    items JSONB DEFAULT '[]'::jsonb,
+    "totalAmount" NUMERIC DEFAULT 0,
+    profit NUMERIC DEFAULT 0,
+    status TEXT DEFAULT 'Lên đơn',
+    notes TEXT,
+    "deliveryDate" TEXT,
+    "shippingAddress" TEXT,
+    "createdAt" TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 5. Bảng Nhập hàng (purchases)
+CREATE TABLE IF NOT EXISTS public.purchases (
+    id TEXT PRIMARY KEY,
+    supplier TEXT,
+    items JSONB DEFAULT '[]'::jsonb,
+    "totalCost" NUMERIC DEFAULT 0,
+    "createdAt" TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Bật phân quyền (Row Level Security - RLS)
+-- Lưu ý: Để đơn giản cho việc test, các lệnh dưới đây cho phép truy cập công khai.
+-- Trong thực tế, bạn nên cấu hình Policy chặt chẽ hơn.
+
+ALTER TABLE public.customers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.materials ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.purchases ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow public access" ON public.customers FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public access" ON public.materials FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public access" ON public.products FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public access" ON public.orders FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public access" ON public.purchases FOR ALL USING (true) WITH CHECK (true);
